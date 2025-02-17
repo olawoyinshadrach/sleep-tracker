@@ -4,7 +4,7 @@ const Home = () => {
   return (
     <div>
       <h1>Welcome to the Restful Sleep Tracker!</h1>
-      <p>Please Login</p>
+      <p>Please Sign Up</p>
     </div>
   );
 };
