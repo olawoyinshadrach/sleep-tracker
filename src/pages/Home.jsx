@@ -18,7 +18,7 @@ const Home = () => {
       <h1>Welcome to the Restful Sleep Tracker!</h1>
       
       <div className="section">
-        <h2>Last Night's Sleep Data</h2>
+        <h2>Last Night&apos;s Sleep Data</h2>
         {sleepData ? (
           <div className="card">
             <p><strong>Date:</strong> {sleepData.lastNight.date}</p>
