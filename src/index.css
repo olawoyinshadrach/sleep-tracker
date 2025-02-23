@@ -1,77 +1,72 @@
-/* General Reset */
-* {
+/* index.css */
+body {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
+  background-color: #f7f7f7;
+  font-family: Arial, sans-serif;
 }
 
-/* Body Styling */
-body {
-  background-color: #f4f4f4;
-  color: #333;
-  line-height: 1.6;
-}
-
-/* Navigation */
-nav {
-  background-color: #0077cc;
-  padding: 10px 20px;
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 15px;
-}
-
-nav ul li {
-  display: inline;
-}
-
-nav ul li a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav ul li a:hover {
-  text-decoration: underline;
-}
-
-/* Layout Styling */
+/* Global container for pages */
 .container {
-  max-width: 800px;
-  margin: 20px auto;
   padding: 20px;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Button Styling */
-button {
+/* Section spacing */
+.section {
+  margin-bottom: 20px;
+}
+
+/* Card styles */
+.card {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+/* Button styling */
+.button {
   padding: 10px 20px;
-  background-color: #0077cc;
-  color: white;
+  font-size: 16px;
+  cursor: pointer;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
+  margin-right: 10px;
+  color: white;
 }
 
-button:hover {
-  background-color: #005fa3;
+/* Specific button colors */
+.button-green {
+  background-color: #4caf50;
 }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-  .container {
-    padding: 10px;
-  }
+.button-green:hover {
+  background-color: #45a049;
+}
 
-  nav ul {
-    flex-direction: column;
-    gap: 10px;
-  }
+.button-blue {
+  background-color: #2196f3;
+}
+
+.button-blue:hover {
+  background-color: #1976d2;
+}
+
+.button-red {
+  background-color: #f44336;
+}
+
+.button-red:hover {
+  background-color: #d32f2f;
+}
+
+/* Form elements */
+.form {
+  margin-top: 20px;
+}
+
+.input {
+  padding: 5px;
+  font-size: 16px;
+  margin-left: 10px;
 }
