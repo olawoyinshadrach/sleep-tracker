@@ -1,25 +1,17 @@
-import React from "react";
-import { Routes, Route, Link } from "react-router-dom";
-import Home from "./pages/Home";
-import About from "./pages/About";
-import NotFound from "./pages/NotFound";
+// App.js
+import React from 'react';
+import { BrowserRouter as Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Alarm from './pages/Alarm';
+import SleepSession from './pages/SleepSession';
 
 const App = () => {
   return (
-    <div>
-      <nav>
-        <ul>
-          <li><Link to="/">Home</Link></li>
-          <li><Link to="/about">About</Link></li>
-        </ul>
-      </nav>
-
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/alarm" element={<Alarm />} />
+      <Route path="/sleep-session" element={<SleepSession />} />
+    </Routes>
   );
 };
 
