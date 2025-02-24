@@ -1,6 +1,6 @@
 // App.js
-import React from 'react';
-import { BrowserRouter as Routes, Route } from 'react-router-dom';
+
+import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Alarm from './pages/Alarm';
 import SleepSession from './pages/SleepSession';
