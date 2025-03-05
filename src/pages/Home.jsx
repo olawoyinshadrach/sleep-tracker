@@ -1,17 +1,40 @@
-// Home.js
+// src/pages/Home.js
 import React, { useEffect, useState } from "react";
 import { getUserSleepData } from "./sleepData"; // dummy function returning sleep data
 import { useNavigate } from "react-router-dom";
-import { auth } from "../firebase-config";
+import { auth, db } from "../firebase-config";
 import { signOut } from "firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { doc, getDoc } from "firebase/firestore";
+
 
 
 const Home = () => {
   const [user, loading, error] = useAuthState(auth);
+  const [userData, setUserData] = useState(null);
   const [sleepData, setSleepData] = useState(null);
   const userID = "dummyUserID"; // Replace with actual user ID as needed
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch additional user details from Firestore once the user is authenticated
+    if (user) {
+      const fetchUserData = async () => {
+        try {
+          const docRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setUserData(docSnap.data());
+          } else {
+            console.log("No additional user data found.");
+          }
+        } catch (err) {
+          console.error("Error fetching user data:", err);
+        }
+      };
+      fetchUserData();
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -33,7 +56,24 @@ const Home = () => {
       <div className="container">
         <h1>Home Page</h1>
         <p>Welcome, you are logged in!</p>
-        <p>{user.uid}</p>
+        {userData ? (
+          <div className="card">
+            <h2>Welcome, {userData.fullName}</h2>
+            <p>
+              <strong>Email:</strong> {user.email}
+            </p>
+            <p>
+              <strong>Age:</strong> {userData.age}
+            </p>
+            <p>
+              <strong>Sleep Goal:</strong> {userData.sleepGoal} hours
+            </p>
+          </div>
+        ) : (
+          <div className="card">
+            <p>No additional user data found.</p>
+          </div>
+        )}
         <button className="button button-red" onClick={handleLogout}>
           Logout
         </button>

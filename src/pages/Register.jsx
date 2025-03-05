@@ -1,10 +1,14 @@
 // src/pages/Register.jsx
 import React, { useState } from "react";
-import { auth } from "../firebase-config";
+import { auth, db } from "../firebase-config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
 const Register = ({ closeModal }) => {
+  const [fullName, setFullName] = useState("");
+  const [age, setAge] = useState("");
+  const [sleepGoal, setSleepGoal] = useState(""); // e.g., target hours of sleep
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -13,8 +17,17 @@ const Register = ({ closeModal }) => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      // Redirect to home after successful registration
+      // Create user with email and password
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      // Store additional user details in Firestore
+      await setDoc(doc(db, "users", res.user.uid), {
+        fullName,
+        age: Number(age),
+        sleepGoal: Number(sleepGoal),
+        email,
+        createdAt: new Date(),
+      });
+      // Redirect to home after registration
       navigate("/");
       if (closeModal) closeModal();
     } catch (err) {
@@ -41,6 +54,36 @@ const Register = ({ closeModal }) => {
       <div className="modal-content">
         <h2>Register</h2>
         <form onSubmit={handleRegister}>
+          <div className="form section">
+            <label>Full Name:</label>
+            <input
+              className="input"
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form section">
+            <label>Age:</label>
+            <input
+              className="input"
+              type="number"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form section">
+            <label>Sleep Goal (hours):</label>
+            <input
+              className="input"
+              type="number"
+              value={sleepGoal}
+              onChange={(e) => setSleepGoal(e.target.value)}
+              required
+            />
+          </div>
           <div className="form section">
             <label>Email:</label>
             <input
