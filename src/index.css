@@ -98,3 +98,155 @@ body {
   font-weight: bold;
   margin-top: 10px;
 }
+
+/* Dashboard Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.dashboard-card {
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card {
+  min-height: 280px;
+}
+
+.user-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background: white;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-summary h2 {
+  margin: 0;
+}
+
+.sleep-goal-indicator {
+  text-align: center;
+}
+
+.goal-met {
+  color: #4CAF50;
+  font-weight: bold;
+}
+
+.goal-missed {
+  color: #F44336;
+  font-weight: bold;
+}
+
+/* Score Card */
+.score-card {
+  text-align: center;
+}
+
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.score-circle span {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+/* Last Night Details */
+.sleep-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.detail-item span {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+/* Stats Summary */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.stat-item span {
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.stat-item strong {
+  font-size: 1.1rem;
+  margin-top: 4px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.button-blue {
+  background-color: #2196F3;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .user-summary {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .sleep-details,
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
