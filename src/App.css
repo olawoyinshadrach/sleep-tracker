@@ -40,3 +40,120 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Alarm Setup */
+.alarm-setup {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.current-time-display {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.current-time-display h2 {
+  font-size: 2rem;
+  color: #333;
+}
+
+.instruction-text {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #6c63ff;
+}
+
+/* Sleep Tracking */
+.sleep-tracking {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tracking-info {
+  margin-bottom: 2rem;
+}
+
+.time-display {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.time-display p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
+.alarm-status {
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.status-indicator {
+  padding: 1rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.alarm-waiting {
+  background-color: rgba(108, 99, 255, 0.1);
+  border: 1px solid #6c63ff;
+}
+
+.alarm-active {
+  background-color: rgba(255, 87, 87, 0.2);
+  border: 1px solid #ff5757;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.alarm-active h3 {
+  color: #ff5757;
+  font-size: 1.8rem;
+}
+
+.action-buttons {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+/* Sleep Session Enhancements */
+.tracked-sleep-notice {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #e3fcef;
+  border-radius: 8px;
+  border-left: 4px solid #4CAF50;
+}
+
+.calculated-value {
+  font-weight: bold;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  text-align: center;
+}
+
+/* Form Grid Improvements */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}

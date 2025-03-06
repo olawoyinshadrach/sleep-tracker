@@ -17,6 +17,7 @@ const Home = () => {
   const [sleepData, setSleepData] = useState(null);
   const userID = "dummyUserID"; // Replace with actual user ID as needed
   const navigate = useNavigate();
+  const [loadingTemp, setLoading] = useState(false);
 
   // Color constants for charts
   const COLORS = {
@@ -61,9 +62,22 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const data = getUserSleepData(userID);
-    setSleepData(data);
-  }, [userID]);
+    const fetchSleepData = async () => {
+      try {
+        setLoading(true);
+        // Use the actual user ID if available, otherwise use the dummy one
+        const userId = user?.uid || userID;
+        const data = await getUserSleepData(userId);
+        setSleepData(data);
+      } catch (error) {
+        console.error("Error fetching sleep data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSleepData();
+  }, [userID, user]);
 
   // Get a color based on sleep quality score
   const getQualityColor = (quality) => {
@@ -120,7 +134,12 @@ const Home = () => {
         </div>
       )}
 
-      {sleepData ? (
+      {loadingTemp ? (
+        <div className="loading-container">
+          <p>Loading your sleep data...</p>
+          {/* You could add a loading spinner here */}
+        </div>
+      ) : sleepData ? (
         <div className="dashboard-grid">
           {/* Sleep Quality Score Card */}
           <div className="dashboard-card score-card">
@@ -285,8 +304,7 @@ const Home = () => {
         </div>
       ) : (
         <div className="loading-container">
-          <p>Loading your sleep data...</p>
-          {/* You could add a loading spinner here */}
+          <p>No sleep data found. Start tracking your sleep to see insights!</p>
         </div>
       )}
 
