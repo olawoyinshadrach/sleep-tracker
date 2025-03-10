@@ -1,0 +1,160 @@
+/* Themed Components - Common UI elements with theme variables */
+
+/* Page container */
+.page-container {
+  background-color: var(--background);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 1rem;
+  transition: all 0.3s ease;
+}
+
+/* Cards */
+.themed-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+/* Form elements */
+.themed-input {
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem;
+  border-radius: 6px;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.themed-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.25);
+}
+
+.themed-select {
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.75rem;
+  border-radius: 6px;
+  width: 100%;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 30px;
+  transition: all 0.3s ease;
+}
+
+.themed-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Buttons */
+.themed-button {
+  background-color: var(--accent);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.themed-button:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.themed-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.themed-button-secondary {
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.themed-button-secondary:hover:not(:disabled) {
+  background-color: rgba(var(--accent-rgb), 0.1);
+}
+
+/* Typography */
+.themed-title {
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+}
+
+.themed-subtitle {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.themed-text {
+  color: var(--text-primary);
+}
+
+.themed-text-muted {
+  color: var(--text-secondary);
+}
+
+/* Alert/notification */
+.themed-alert {
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid;
+}
+
+.themed-alert-info {
+  background-color: rgba(var(--accent-rgb), 0.1);
+  border-left-color: var(--accent);
+}
+
+.themed-alert-success {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-left-color: #4CAF50;
+}
+
+.themed-alert-warning {
+  background-color: rgba(255, 152, 0, 0.1);
+  border-left-color: #FF9800;
+}
+
+.themed-alert-error {
+  background-color: rgba(244, 67, 54, 0.1);
+  border-left-color: #F44336;
+}
+
+/* Loading states */
+.themed-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: var(--text-secondary);
+}
+
+.themed-spinner {
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

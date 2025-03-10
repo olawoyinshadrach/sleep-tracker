@@ -10,13 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@genkit-ai/googleai": "^1.1.0",
     "firebase": "^11.4.0",
+    "genkit": "^1.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-firebase-hooks": "^5.1.1",
     "react-router-dom": "^7.1.5",
-    "styled-components": "^6.1.15",
-    "recharts": "^2.5.0"
+    "recharts": "^2.5.0",
+    "styled-components": "^6.1.15"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",

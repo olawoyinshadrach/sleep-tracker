@@ -9,7 +9,7 @@ const SleepSession = () => {
   const [user] = useAuthState(auth);
   const navigate = useNavigate();
   const location = useLocation();
-  const { resetAlarm } = useAlarm();
+  const { resetAlarm, sleepRecommendations } = useAlarm();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   
@@ -23,8 +23,9 @@ const SleepSession = () => {
   const [remSleep, setRemSleep] = useState(1.5);
   const [notes, setNotes] = useState("");
   
-  // Check for pre-populated data from alarm tracking
+  // Check for pre-populated data from alarm tracking or sleep recommendations
   useEffect(() => {
+    // Check for alarm tracking data first
     if (location.state?.sleepData) {
       const { bedtime: trackedBedtime, wakeTime: trackedWakeTime } = location.state.sleepData;
       
@@ -39,7 +40,26 @@ const SleepSession = () => {
       // Reset alarm context since we've consumed the data
       resetAlarm();
     }
-  }, [location.state, resetAlarm]);
+    // Then check for sleep recommendations from integrated sleep clock
+    else if (location.state?.sleepRecommendations) {
+      const { suggestedBedtime, recommendedSleepHours, wakeTime: recommendedWakeTime } = 
+        location.state.sleepRecommendations;
+      
+      if (suggestedBedtime) {
+        setBedtime(suggestedBedtime);
+      }
+      
+      if (recommendedWakeTime) {
+        setWakeTime(recommendedWakeTime);
+      }
+    }
+    // Finally, check context for any stored recommendations
+    else if (sleepRecommendations) {
+      if (sleepRecommendations.suggestedBedtime) {
+        setBedtime(sleepRecommendations.suggestedBedtime);
+      }
+    }
+  }, [location.state, resetAlarm, sleepRecommendations]);
   
   const calculateSleepDuration = () => {
     try {
@@ -132,11 +152,22 @@ const SleepSession = () => {
   
   return (
     <div className="container">
-      <h1>Log Sleep Session</h1>
+      <div className="header-with-nav">
+        <h1>Log Sleep Session</h1>
+        <button className="button button-sm" onClick={() => navigate('/')}>
+          Back to Dashboard
+        </button>
+      </div>
       
       {location.state?.sleepData && (
         <div className="tracked-sleep-notice">
           <p>Your sleep has been tracked from {bedtime} to {wakeTime}. Please review and complete the details below.</p>
+        </div>
+      )}
+      
+      {location.state?.sleepRecommendations && (
+        <div className="recommendations-notice">
+          <p>We've pre-filled your form based on your sleep recommendations.</p>
         </div>
       )}
       

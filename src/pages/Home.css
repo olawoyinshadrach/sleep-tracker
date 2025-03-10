@@ -1,0 +1,380 @@
+.container {
+  background-color: var(--background);
+  color: var(--text-primary);
+  padding: 1rem;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+/* User summary section */
+.user-summary {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.user-summary h2 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.sleep-goal-indicator {
+  color: var(--text-secondary);
+  margin: 1rem 0;
+}
+
+.goal-met {
+  color: #4CAF50;
+}
+
+.goal-missed {
+  color: #F44336;
+}
+
+/* Dashboard cards */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-card {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card h3 {
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+/* Sleep clock preview card */
+.sleep-clock-card {
+  grid-column: 1 / -1;
+}
+
+.sleep-clock-preview {
+  background-color: var(--input-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.sleep-clock-preview p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Score card */
+.score-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.score-circle-container {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 1rem auto;
+}
+
+.score-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 10px var(--shadow);
+  animation: fadeIn 1s ease-out;
+}
+
+.score-circle-inner {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background-color: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-circle span {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--text-primary);
+  animation: scaleIn 0.7s ease-out;
+}
+
+.score-label {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
+}
+
+.score-quality-text {
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0.3; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.7); }
+  to { transform: scale(1); }
+}
+
+/* Chart cards */
+.chart-card {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card h3 {
+  color: var(--text-primary);
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+/* Donut chart specific styles */
+.dashboard-card:nth-child(4) .recharts-responsive-container {
+  margin: 0 auto;
+  height: 240px !important;
+}
+
+.dashboard-card:nth-child(4) .recharts-legend-wrapper {
+  padding-top: 10px !important;
+}
+
+/* Fix for chart overflow */
+.recharts-responsive-container {
+  margin: 0;
+  width: 100% !important; 
+  flex: 1;
+}
+
+.recharts-wrapper {
+  margin: 0 auto;
+}
+
+.recharts-surface {
+  overflow: visible;
+}
+
+.recharts-legend-wrapper {
+  padding-top: 5px !important;
+}
+
+/* Sleep Duration Chart */
+.dashboard-card:nth-child(2) .recharts-responsive-container {
+  margin-top: 5px;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+.dashboard-card:nth-child(2) .recharts-wrapper {
+  overflow: hidden;
+}
+
+.dashboard-card:nth-child(2) .recharts-surface {
+  overflow: visible;
+}
+
+.dashboard-card:nth-child(2) .recharts-cartesian-axis-line {
+  stroke: var(--border-color);
+}
+
+.dashboard-card:nth-child(2) .recharts-cartesian-grid-horizontal line,
+.dashboard-card:nth-child(2) .recharts-cartesian-grid-vertical line {
+  stroke: var(--border-color);
+  opacity: 0.5;
+}
+
+.dashboard-card:nth-child(2) .recharts-tooltip-cursor {
+  stroke: var(--text-secondary);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+.dashboard-card:nth-child(2) .recharts-legend-item-text {
+  color: var(--text-primary) !important;
+}
+
+.recharts-default-legend {
+  margin-top: 10px !important; 
+}
+
+/* Last night details */
+.last-night-card .sleep-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--input-bg);
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.detail-item span {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.detail-item strong {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+/* Stats summary */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--input-bg);
+  padding: 0.75rem;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.stat-item span {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.stat-item strong {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.button-green {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.button-green:hover {
+  background-color: #43a047;
+}
+
+.button-blue {
+  background-color: var(--accent);
+  color: white;
+}
+
+.button-blue:hover {
+  opacity: 0.9;
+}
+
+.button-purple {
+  background-color: #673ab7;
+  color: white;
+}
+
+.button-purple:hover {
+  background-color: #5e35b1;
+}
+
+.button-red {
+  background-color: #f44336;
+  color: white;
+}
+
+.button-red:hover {
+  background-color: #e53935;
+}
+
+/* Loading container */
+.loading-container {
+  background-color: var(--card-bg);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons .button {
+    width: 100%;
+  }
+  
+  .chart-card {
+    padding-bottom: 1rem;
+  }
+  
+  .recharts-responsive-container {
+    margin: 0 -5px;
+    width: calc(100% + 10px) !important;
+  }
+  
+  .dashboard-card:nth-child(2) .recharts-surface {
+    overflow: visible;
+  }
+  
+  .dashboard-card:nth-child(2) .recharts-label {
+    display: none;
+  }
+}

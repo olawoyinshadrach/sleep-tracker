@@ -1,9 +1,38 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--background, #ffffff);
+  color: var(--text-primary, #333333);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 /* index.css */
 body {
   margin: 0;
   padding: 0;
   background-color: #f7f7f7;
   font-family: Arial, sans-serif;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Global container for pages */
@@ -300,6 +329,27 @@ body {
   padding: 10px;
   background: #FFEBEE;
   border-radius: 4px;
+}
+
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+button {
+  cursor: pointer;
+}
+
+a {
+  color: var(--accent, #646cff);
+  text-decoration: inherit;
+}
+
+a:hover {
+  opacity: 0.8;
+}
+
+/* Fixes for chart components */
+.recharts-surface {
+  overflow: visible;
 }
 
 /* Responsive adjustments */

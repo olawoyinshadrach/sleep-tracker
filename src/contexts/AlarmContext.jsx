@@ -1,154 +1,134 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 
 const AlarmContext = createContext();
 
-export const useAlarm = () => useContext(AlarmContext);
+export function useAlarm() {
+  return useContext(AlarmContext);
+}
 
-export const AlarmProvider = ({ children }) => {
-  const [alarmTime, setAlarmTime] = useState('');
+export function AlarmProvider({ children }) {
+  // State for alarm functionality
+  const [alarmTime, setAlarmTime] = useState("");
   const [isAlarmSet, setIsAlarmSet] = useState(false);
   const [isAlarmActive, setIsAlarmActive] = useState(false);
-  const [bedtime, setBedtime] = useState('');
-  const [wakeTime, setWakeTime] = useState('');
+  const [alarmAudio] = useState(new Audio("https://www.soundjay.com/button/beep-07.wav"));
+  const [bedtime, setBedtime] = useState("");
   const [sleepStarted, setSleepStarted] = useState(false);
-  
-  // Load state from localStorage on component mount
+  const [sleepStartTime, setSleepStartTime] = useState(null);
+  const [recommendedSleepHours, setRecommendedSleepHours] = useState(8);
+  const [sleepRecommendations, setSleepRecommendations] = useState(null);
+
+  // Check if alarm should be triggered
   useEffect(() => {
-    const savedAlarmState = localStorage.getItem('alarmState');
-    if (savedAlarmState) {
-      try {
-        const parsedState = JSON.parse(savedAlarmState);
-        setAlarmTime(parsedState.alarmTime || '');
-        setIsAlarmSet(parsedState.isAlarmSet || false);
-        setIsAlarmActive(parsedState.isAlarmActive || false);
-        setBedtime(parsedState.bedtime || '');
-        setSleepStarted(parsedState.sleepStarted || false);
-      } catch (error) {
-        console.error('Error parsing saved alarm state:', error);
-      }
-    }
-  }, []);
-  
-  // Save state to localStorage whenever it changes
-  useEffect(() => {
-    if (isAlarmSet || sleepStarted) {
-      const stateToSave = {
-        alarmTime,
-        isAlarmSet,
-        isAlarmActive,
-        bedtime,
-        sleepStarted
-      };
-      localStorage.setItem('alarmState', JSON.stringify(stateToSave));
-    }
-  }, [alarmTime, isAlarmSet, isAlarmActive, bedtime, sleepStarted]);
-  
-  // Set up alarm checking interval
-  useEffect(() => {
-    let intervalId;
+    let interval;
     
-    if (isAlarmSet && !isAlarmActive) {
-      intervalId = setInterval(() => {
+    if (isAlarmSet) {
+      interval = setInterval(() => {
         const now = new Date();
-        const currentTime = now.getHours().toString().padStart(2, '0') + ':' + 
-                           now.getMinutes().toString().padStart(2, '0');
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
         
-        if (currentTime === alarmTime) {
+        const [alarmHour, alarmMinute] = alarmTime.split(':').map(Number);
+        
+        if (currentHour === alarmHour && currentMinute === alarmMinute) {
           setIsAlarmActive(true);
-          setWakeTime(currentTime);
-          
-          // Play alarm sound
-          const audio = new Audio('/alarm-sound.mp3');
-          audio.loop = true;
-          audio.play().catch(error => {
-            console.error('Failed to play alarm sound:', error);
-          });
-          
-          // Store the audio reference so we can stop it later
-          window.alarmAudio = audio;
+          alarmAudio.loop = true;
+          alarmAudio.play();
         }
-      }, 1000); // Check every second
+      }, 1000);
     }
     
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      clearInterval(interval);
+      alarmAudio.pause();
+      alarmAudio.currentTime = 0;
     };
-  }, [isAlarmSet, isAlarmActive, alarmTime]);
-  
+  }, [isAlarmSet, alarmTime, alarmAudio]);
+
   // Start sleep tracking
-  const startSleepTracking = () => {
+  const startSleepTracking = (customBedtime = null) => {
     const now = new Date();
     const currentTime = now.getHours().toString().padStart(2, '0') + ':' + 
-                       now.getMinutes().toString().padStart(2, '0');
+                      now.getMinutes().toString().padStart(2, '0');
     
-    setBedtime(currentTime);
+    // Use provided bedtime or current time
+    const startBedtime = customBedtime || currentTime;
+    
+    setBedtime(startBedtime);
+    setSleepStartTime(now);
     setSleepStarted(true);
     setIsAlarmSet(true);
+    console.log(`Sleep tracking started at ${startBedtime}`);
   };
-  
-  // Stop sleep tracking
-  const stopSleepTracking = (wasAlarmTriggered = false) => {
-    if (!wasAlarmTriggered) {
-      const now = new Date();
-      const currentTime = now.getHours().toString().padStart(2, '0') + ':' + 
-                         now.getMinutes().toString().padStart(2, '0');
-      setWakeTime(currentTime);
-    }
-    
-    // Stop alarm sound if it's playing
-    if (window.alarmAudio) {
-      window.alarmAudio.pause();
-      window.alarmAudio.currentTime = 0;
-      window.alarmAudio = null;
-    }
-    
-    setIsAlarmActive(false);
+
+  // Stop sleep tracking and return sleep data
+  const stopSleepTracking = (alarmTriggered = false) => {
     setIsAlarmSet(false);
+    setIsAlarmActive(false);
     setSleepStarted(false);
+    alarmAudio.pause();
+    alarmAudio.currentTime = 0;
     
-    // Clear localStorage
-    localStorage.removeItem('alarmState');
+    const now = new Date();
+    const wakeTime = now.getHours().toString().padStart(2, '0') + ':' + 
+                   now.getMinutes().toString().padStart(2, '0');
     
+    // Calculate sleep metrics
+    const sleepDuration = sleepStartTime ? 
+      (now - sleepStartTime) / (1000 * 60 * 60) : null;
+    
+    console.log(`Sleep tracking stopped at ${wakeTime}`);
+    console.log(`Total sleep time: ${sleepDuration ? sleepDuration.toFixed(2) + ' hours' : 'Unknown'}`);
+    
+    // Return data for logging in Sleep Session
     return {
       bedtime,
-      wakeTime: wasAlarmTriggered ? alarmTime : wakeTime
+      wakeTime,
+      sleepDuration: sleepDuration ? parseFloat(sleepDuration.toFixed(2)) : null,
+      recommendedSleepHours
     };
   };
-  
-  // Reset all state
+
+  // Reset all alarm and tracking state
   const resetAlarm = () => {
-    setAlarmTime('');
+    setAlarmTime("");
     setIsAlarmSet(false);
     setIsAlarmActive(false);
-    setBedtime('');
-    setWakeTime('');
+    setBedtime("");
     setSleepStarted(false);
-    localStorage.removeItem('alarmState');
+    setSleepStartTime(null);
+    alarmAudio.pause();
+    alarmAudio.currentTime = 0;
+  };
+  
+  // Store sleep recommendations from the integrated sleep clock
+  const storeSleepRecommendations = (recommendations) => {
+    setSleepRecommendations(recommendations);
     
-    // Stop alarm sound if it's playing
-    if (window.alarmAudio) {
-      window.alarmAudio.pause();
-      window.alarmAudio.currentTime = 0;
-      window.alarmAudio = null;
+    if (recommendations.recommendedSleepHours) {
+      setRecommendedSleepHours(recommendations.recommendedSleepHours);
     }
   };
-  
-  const value = {
-    alarmTime,
-    setAlarmTime,
-    isAlarmSet,
-    isAlarmActive,
-    bedtime,
-    wakeTime,
-    sleepStarted,
-    startSleepTracking,
-    stopSleepTracking,
-    resetAlarm
-  };
-  
+
   return (
-    <AlarmContext.Provider value={value}>
+    <AlarmContext.Provider
+      value={{
+        alarmTime,
+        setAlarmTime,
+        isAlarmSet,
+        isAlarmActive,
+        bedtime,
+        sleepStarted,
+        startSleepTracking,
+        stopSleepTracking,
+        resetAlarm,
+        recommendedSleepHours,
+        setRecommendedSleepHours,
+        sleepRecommendations,
+        storeSleepRecommendations
+      }}
+    >
       {children}
     </AlarmContext.Provider>
   );
-};
+}

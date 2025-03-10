@@ -10,7 +10,8 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   ResponsiveContainer, Cell
 } from 'recharts';
-import SleepClockWithClock from "./Clock/SleepClockWithClock";
+import { useAlarm } from "../contexts/AlarmContext";
+import "./Home.css"; // Import the Home CSS file
 
 const Home = () => {
   const [user, loading] = useAuthState(auth);
@@ -18,6 +19,7 @@ const Home = () => {
   const [sleepData, setSleepData] = useState(null);
   const navigate = useNavigate();
   const [loadingTemp, setLoading] = useState(false);
+  const { setAlarmTime } = useAlarm();
 
   // Color constants for charts
   const COLORS = {
@@ -145,10 +147,19 @@ const Home = () => {
         </div>
       )}
 
-      {/* Sleep Clock Component */}
+      {/* Replace the SleepClockWithClock component with a Sleep Clock Preview card */}
       <div className="dashboard-card sleep-clock-card">
         <h3>Sleep Clock</h3>
-        <SleepClockWithClock />
+        <div className="sleep-clock-preview">
+          <p>Plan your sleep with our intelligent sleep calculator.</p>
+          <p>Answer a few questions about your sleep habits to get personalized recommendations.</p>
+          <button 
+            className="button button-blue" 
+            onClick={() => navigate("/sleep-clock")}
+          >
+            Open Sleep Calculator
+          </button>
+        </div>
       </div>
 
       {loadingTemp ? (
@@ -162,41 +173,84 @@ const Home = () => {
           <div className="dashboard-card score-card">
             <h3>Sleep Score</h3>
             <div className="score-display">
-              <div 
-                className="score-circle" 
-                style={{ 
-                  background: `conic-gradient(${getQualityColor(sleepData.stats.sleepScore)} ${sleepData.stats.sleepScore}%, #e0e0e0 0)` 
-                }}
-              >
-                <span>{sleepData.stats.sleepScore}</span>
+              <div className="score-circle-container">
+                <div 
+                  className="score-circle" 
+                  style={{ 
+                    background: `conic-gradient(${getQualityColor(sleepData.stats.sleepScore)} ${sleepData.stats.sleepScore}%, var(--input-bg) 0)` 
+                  }}
+                >
+                  <div className="score-circle-inner">
+                    <span>{sleepData.stats.sleepScore}</span>
+                  </div>
+                </div>
               </div>
-              <p>Your sleep health is {
-                sleepData.stats.sleepScore >= 80 ? "Excellent" :
-                sleepData.stats.sleepScore >= 60 ? "Good" :
-                sleepData.stats.sleepScore >= 40 ? "Fair" : "Poor"
-              }</p>
+              <p className="score-label">Your sleep health is <span className="score-quality-text" style={{ color: getQualityColor(sleepData.stats.sleepScore) }}>
+                {sleepData.stats.sleepScore >= 80 ? "Excellent" :
+                 sleepData.stats.sleepScore >= 60 ? "Good" :
+                 sleepData.stats.sleepScore >= 40 ? "Fair" : "Poor"}
+              </span></p>
             </div>
           </div>
 
           {/* Sleep Duration Chart */}
           <div className="dashboard-card chart-card">
             <h3>Sleep Duration (Last 7 Days)</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={sleepData.weeklyData}>
-                <CartesianGrid strokeDasharray="3 3" />
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart 
+                data={sleepData.weeklyData}
+                margin={{ top: 10, right: 25, bottom: 20, left: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
                 <XAxis 
                   dataKey="date" 
                   tickFormatter={formatDateLabel}
+                  stroke="var(--text-secondary)"
+                  tick={{ fontSize: 12 }}
+                  tickMargin={10}
                 />
-                <YAxis label={{ value: 'Hours', angle: -90, position: 'insideLeft' }} />
-                <Tooltip formatter={(value) => [`${Math.round(value * 10) / 10} hrs`, "Sleep Duration"]} />
-                <Legend />
+                <YAxis 
+                  label={{ 
+                    value: 'Hours', 
+                    angle: -90, 
+                    position: 'insideLeft', 
+                    dy: 10, 
+                    dx: -5, 
+                    fontSize: 12,
+                    fill: 'var(--text-secondary)' 
+                  }} 
+                  domain={[0, Math.max(userData?.sleepGoal ? userData.sleepGoal + 2 : 10, 10)]}
+                  ticks={[0, 2, 4, 6, 8, 10, 12].filter(tick => tick <= (userData?.sleepGoal ? userData.sleepGoal + 2 : 10))}
+                  stroke="var(--text-secondary)"
+                  tick={{ fontSize: 12 }}
+                  tickMargin={5}
+                  width={45}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'var(--card-bg)', 
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '4px',
+                    color: 'var(--text-primary)'
+                  }}
+                  formatter={(value) => [`${Math.round(value * 10) / 10} hrs`, "Sleep Duration"]} 
+                  isAnimationActive={false}
+                />
+                <Legend 
+                  verticalAlign="bottom" 
+                  height={36} 
+                  wrapperStyle={{ paddingTop: 10 }}
+                />
                 <Line 
                   type="monotone" 
                   dataKey="sleepDuration" 
                   stroke={COLORS.primary} 
-                  activeDot={{ r: 8 }}
+                  activeDot={{ r: 6, strokeWidth: 1, fill: COLORS.primary }}
                   name="Sleep Duration" 
+                  strokeWidth={2.5}
+                  dot={{ stroke: 'var(--card-bg)', strokeWidth: 1, r: 4 }}
+                  animationDuration={1500}
+                  connectNulls={true}
                 />
                 {userData?.sleepGoal && (
                   <Line 
@@ -206,6 +260,10 @@ const Home = () => {
                     stroke={COLORS.tertiary} 
                     strokeDasharray="5 5"
                     name="Sleep Goal" 
+                    strokeWidth={2}
+                    dot={false}
+                    isAnimationActive={false}
+                    connectNulls={true}
                   />
                 )}
               </LineChart>
@@ -215,16 +273,23 @@ const Home = () => {
           {/* Sleep Quality Chart */}
           <div className="dashboard-card chart-card">
             <h3>Sleep Quality (Last 7 Days)</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={sleepData.weeklyData}>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart 
+                data={sleepData.weeklyData}
+                margin={{ top: 5, right: 5, bottom: 5, left: 5 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="date" 
                   tickFormatter={formatDateLabel}
                 />
-                <YAxis label={{ value: 'Quality Score', angle: -90, position: 'insideLeft' }} />
+                <YAxis 
+                  label={{ value: 'Quality Score', angle: -90, position: 'insideLeft', dy: -10, dx: -25, fontSize: 12 }} 
+                  domain={[0, 100]}
+                  tickCount={6}
+                />
                 <Tooltip formatter={(value) => [`${value}`, "Quality Score"]} />
-                <Bar dataKey="quality" name="Sleep Quality">
+                <Bar dataKey="quality" name="Sleep Quality" barSize={30}>
                   {sleepData.weeklyData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={getQualityColor(entry.quality)} />
                   ))}
@@ -236,25 +301,26 @@ const Home = () => {
           {/* Sleep Distribution Pie Chart */}
           <div className="dashboard-card chart-card">
             <h3>Average Sleep Composition</h3>
-            <ResponsiveContainer width="100%" height={200}>
+            <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <Pie
                   data={prepareSleepDistributionData()}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  outerRadius={80}
+                  outerRadius="80%"
+                  innerRadius="50%"
                   fill="#8884d8"
                   dataKey="value"
                   nameKey="name"
-                  label={({ name, value }) => `${name}: ${value}h`}
+                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
                   {prepareSleepDistributionData().map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
                 <Tooltip formatter={(value) => [`${value} hours`, ""]} />
-                <Legend />
+                <Legend layout="horizontal" verticalAlign="bottom" align="center" wrapperStyle={{ paddingTop: 20 }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -337,6 +403,12 @@ const Home = () => {
           onClick={() => navigate("/sleep-session")}
         >
           Log Sleep Session
+        </button>
+        <button
+          className="button button-purple"
+          onClick={() => navigate("/sleep-clock")}
+        >
+          Smart Sleep Calculator
         </button>
       </div>
     </div>
