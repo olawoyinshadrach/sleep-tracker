@@ -1,0 +1,73 @@
+.simple-carousel {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  min-height: 220px;
+}
+
+.carousel-slide {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  visibility: hidden;
+}
+
+.carousel-slide.active {
+  opacity: 1;
+  position: relative;
+  visibility: visible;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.carousel-btn {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0 10px;
+  font-size: 1rem;
+  z-index: 1;
+}
+
+.carousel-btn:hover {
+  background-color: var(--input-bg);
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 8px;
+  margin: 0 10px;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--border-color);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.carousel-dot.active {
+  background-color: var(--accent-color, #8884d8);
+  transform: scale(1.3);
+}

@@ -348,6 +348,26 @@
   color: var(--text-secondary);
 }
 
+/* Carousel styling */
+.dashboard-carousel {
+  margin-bottom: 20px;
+}
+
+.slick-prev:before, .slick-next:before {
+  color: var(--accent-color) !important;
+  font-size: 24px;
+}
+
+.slick-dots li button:before {
+  color: var(--accent-color) !important;
+}
+
+/* Make sure the cards in the carousel have consistent height */
+.dashboard-carousel .dashboard-card {
+  height: 220px;
+  margin: 10px;
+}
+
 @media (max-width: 768px) {
   .dashboard-grid {
     grid-template-columns: 1fr;
