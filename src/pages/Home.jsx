@@ -10,6 +10,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, 
   ResponsiveContainer, Cell
 } from 'recharts';
+import SleepClockWithClock from "./Clock/SleepClockWithClock";
 
 const Home = () => {
   const [user, loading] = useAuthState(auth);
@@ -143,6 +144,12 @@ const Home = () => {
           </button>
         </div>
       )}
+
+      {/* Sleep Clock Component */}
+      <div className="dashboard-card sleep-clock-card">
+        <h3>Sleep Clock</h3>
+        <SleepClockWithClock />
+      </div>
 
       {loadingTemp ? (
         <div className="loading-container">
