@@ -12,10 +12,9 @@ import {
 } from 'recharts';
 
 const Home = () => {
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const [userData, setUserData] = useState(null);
   const [sleepData, setSleepData] = useState(null);
-  const userID = "dummyUserID"; // Replace with actual user ID as needed
   const navigate = useNavigate();
   const [loadingTemp, setLoading] = useState(false);
 
@@ -31,6 +30,13 @@ const Home = () => {
     rem: "#673AB7",
     light: "#9C27B0",
   };
+
+  // Redirect to landing if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/landing");
+    }
+  }, [user, loading, navigate]);
 
   useEffect(() => {
     // Fetch additional user details from Firestore once the user is authenticated
@@ -55,7 +61,7 @@ const Home = () => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      navigate("/"); // Redirect to landing page after logout
+      navigate("/landing"); // Redirect to landing page after logout
     } catch (error) {
       console.error("Error logging out:", error);
     }
@@ -64,10 +70,10 @@ const Home = () => {
   useEffect(() => {
     const fetchSleepData = async () => {
       try {
+        if (!user) return;
+        
         setLoading(true);
-        // Use the actual user ID if available, otherwise use the dummy one
-        const userId = user?.uid || userID;
-        const data = await getUserSleepData(userId);
+        const data = await getUserSleepData(user.uid);
         setSleepData(data);
       } catch (error) {
         console.error("Error fetching sleep data:", error);
@@ -77,7 +83,7 @@ const Home = () => {
     };
 
     fetchSleepData();
-  }, [userID, user]);
+  }, [user]);
 
   // Get a color based on sleep quality score
   const getQualityColor = (quality) => {
@@ -102,6 +108,10 @@ const Home = () => {
       { name: 'Light Sleep', value: sleepData.sleepDistribution.light, color: COLORS.light }
     ];
   };
+
+  if (loading) {
+    return <div className="loading-container">Authenticating...</div>;
+  }
 
   return (
     <div className="container">

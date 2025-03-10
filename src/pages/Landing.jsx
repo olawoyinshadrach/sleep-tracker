@@ -1,12 +1,23 @@
 // src/pages/Landing.jsx
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Register from "./Register";
 import Login from "./Login";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase-config";
 
 const Landing = () => {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
+  const [user, loading] = useAuthState(auth);
+  const navigate = useNavigate();
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleShowLogin = () => setShowLogin(true);
   const handleCloseLogin = () => setShowLogin(false);
@@ -14,10 +25,14 @@ const Landing = () => {
   const handleShowRegister = () => setShowRegister(true);
   const handleCloseRegister = () => setShowRegister(false);
 
+  if (loading) {
+    return <div className="loading-container">Loading...</div>;
+  }
+
   return (
     <div className="container">
-      <h1>Welcome to Our App</h1>
-      <p>Please log in or sign up to continue.</p>
+      <h1>Restful Sleep Tracker</h1>
+      <p>Track your sleep patterns and improve your rest quality.</p>
       <div className="section">
         <button className="button button-blue" onClick={handleShowLogin}>
           Login

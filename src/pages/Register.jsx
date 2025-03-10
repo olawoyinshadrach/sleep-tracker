@@ -1,9 +1,10 @@
 // src/pages/Register.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { auth, db } from "../firebase-config";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 const Register = ({ closeModal }) => {
   const [fullName, setFullName] = useState("");
@@ -13,6 +14,14 @@ const Register = ({ closeModal }) => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const [user] = useAuthState(auth);
+
+  // Redirect to home if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -27,8 +36,7 @@ const Register = ({ closeModal }) => {
         email,
         createdAt: new Date(),
       });
-      // Redirect to home after registration
-      navigate("/");
+      // Navigation will happen automatically through useEffect
       if (closeModal) closeModal();
     } catch (err) {
       let errorMessage = "";
