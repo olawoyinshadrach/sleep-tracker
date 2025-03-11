@@ -213,6 +213,7 @@ const Home = () => {
       ) : sleepData ? (
         <div className="dashboard-grid">
           {/* Sleep Quality Score Card */}
+          {/* hello */}
           <div className="dashboard-card score-card">
             <h3>Sleep Score</h3>
             <div className="score-display">
