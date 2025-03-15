@@ -7,6 +7,12 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { doc, getDoc } from "firebase/firestore";
 import AIInsights from "../components/AIInsights";
 import SimpleCarousel from "../components/SimpleCarousel";
+// import the new component
+import RecommendedActions from "../components/RecommendedActions"; 
+// import Toastify
+import { ToastContainer } from "react-toastify";  
+
+
 import {
   LineChart,
   Line,
@@ -143,6 +149,22 @@ const Home = () => {
   return (
     <div className="container">
       <h1>Sleep Dashboard</h1>
+
+  {/* Toast Notifications */}
+  <ToastContainer />
+
+      {/* Display Recommended Actions if sleep data is available */}
+
+      {sleepData && (
+        <RecommendedActions 
+          sleepDuration={sleepData.lastNight.sleepDuration} 
+          sleepQuality={sleepData.lastNight.quality} 
+
+          // For test manually
+          // sleepDuration={4.0} 
+          // sleepQuality={40} 
+        />
+      )}
 
       {userData && user && (
         <div className="user-summary">

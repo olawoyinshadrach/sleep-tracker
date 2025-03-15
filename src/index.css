@@ -369,3 +369,33 @@ a:hover {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Recommended actions */
+.recommended-actions {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #ffebee;
+  border-left: 4px solid #d32f2f;
+  border-radius: 8px;
+}
+
+.recommended-actions h3 {
+  color: #d32f2f;
+  font-size: 1.4rem;
+}
+
+.recommended-actions p {
+  font-size: 1rem;
+  color: #333;
+}
+
+.recommended-actions a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.recommended-actions a:hover {
+  text-decoration: underline;
+}
