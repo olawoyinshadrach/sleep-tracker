@@ -10,9 +10,21 @@ import {
   Timestamp,
   serverTimestamp
 } from "firebase/firestore";
+import sleepScorePredictor from "../utils/sleepScorePredictor";
+
+// Initialize the KNN model when the module loads
+(async function() {
+  try {
+    await sleepScorePredictor.initialize();
+    console.log('Sleep score predictor initialized');
+  } catch (err) {
+    console.error('Failed to initialize sleep score predictor:', err);
+  }
+})();
 
 /**
  * Fetches sleep data for a specific user from Firestore
+ * Modified to handle enhanced sleep score calculation with confidence
  * @param {string} userId - The user ID
  * @returns {Promise<Object>} - Object containing formatted sleep data
  */
@@ -73,7 +85,8 @@ export const getUserSleepData = async (userId) => {
     
     // Calculate stats
     const averageSleepDuration = weeklyData.reduce((sum, entry) => sum + entry.sleepDuration, 0) / weeklyData.length;
-    const sleepScore = calculateSleepScore(weeklyData);
+    // Get sleep score with confidence information
+    const sleepScore = await calculateSleepScore(weeklyData);
     const sleepConsistency = calculateSleepConsistency(weeklyData);
     
     // Format data for the app
@@ -89,9 +102,12 @@ export const getUserSleepData = async (userId) => {
         averageSleepDuration,
         sleepConsistency,
         totalNightsTracked: sleepEntries.length,
-        sleepScore,
+        sleepScore: sleepScore.score,
         sleepDebt: calculateSleepDebt(weeklyData, 8), // Assuming 8 hours is optimal
         optimalSleepDuration: 8, // This could come from user settings
+        sleepScoreMethod: sleepScore.method,
+        sleepScoreConfidence: sleepScore.confidence,
+        sleepScoreMessage: sleepScore.message
       },
       sleepDistribution: calculateSleepDistribution(weeklyData)
     };
@@ -135,20 +151,80 @@ export const addSleepEntry = async (sleepEntry) => {
 
 /**
  * Calculates the sleep score based on various metrics
+ * Now uses KNN prediction with confidence levels and falls back to traditional calculation
  * @param {Array} weeklyData - Array of sleep entries
- * @returns {number} - Sleep score from 0-100
+ * @returns {Promise<Object>} - Sleep score with confidence information
  */
-const calculateSleepScore = (weeklyData) => {
-  if (weeklyData.length === 0) return 70; // Default score
+const calculateSleepScore = async (weeklyData) => {
+  if (weeklyData.length === 0) {
+    return { 
+      score: 70, 
+      method: 'default',
+      confidence: 0,
+      message: 'No sleep data available' 
+    };
+  }
   
-  // Calculate based on:
-  // 1. Average sleep duration (40%)
-  // 2. Average quality (40%)
-  // 3. Consistency (20%)
-  
+  // Calculate input features for KNN
   const avgDuration = weeklyData.reduce((sum, entry) => sum + entry.sleepDuration, 0) / weeklyData.length;
   const avgQuality = weeklyData.reduce((sum, entry) => sum + entry.quality, 0) / weeklyData.length;
+  const consistencyScore = calculateSleepConsistencyScore(weeklyData);
   
+  // Try to get KNN prediction first
+  try {
+    // Get prediction with confidence information
+    const prediction = await sleepScorePredictor.predict(
+      avgDuration,
+      avgQuality,
+      consistencyScore
+    );
+    
+    // If prediction score is available
+    if (prediction.score !== null) {
+      console.log(`KNN sleep score: ${prediction.score}, confidence: ${Math.round(prediction.confidence * 100)}%`);
+      
+      // For very low confidence predictions, use traditional calculation instead
+      if (prediction.confidenceLevel === 'very low') {
+        const traditionalScore = calculateTraditionalSleepScore(avgDuration, avgQuality, consistencyScore);
+        console.log(`Low confidence KNN prediction, using traditional calculation: ${traditionalScore}`);
+        
+        return {
+          score: traditionalScore,
+          method: 'traditional',
+          knnAttempted: true,
+          knnConfidence: prediction.confidence,
+          message: `Using traditional calculation (KNN confidence too low: ${Math.round(prediction.confidence * 100)}%)`
+        };
+      }
+      
+      // Return KNN prediction with confidence info
+      return {
+        score: prediction.score,
+        method: 'knn',
+        confidence: prediction.confidence,
+        confidenceLevel: prediction.confidenceLevel,
+        message: prediction.message
+      };
+    }
+  } catch (error) {
+    console.log('KNN prediction failed, falling back to traditional calculation:', error);
+  }
+  
+  // Fallback to traditional calculation
+  const traditionalScore = calculateTraditionalSleepScore(avgDuration, avgQuality, consistencyScore);
+  
+  return {
+    score: traditionalScore,
+    method: 'traditional',
+    confidence: 1.0, // Traditional calculation is considered 100% confident
+    message: 'Using traditional calculation (KNN prediction failed)'
+  };
+};
+
+/**
+ * Traditional sleep score calculation (separated for clarity)
+ */
+const calculateTraditionalSleepScore = (avgDuration, avgQuality, consistencyScore) => {
   // Duration score (40 points): Optimal is 7-9 hours
   let durationScore = 0;
   if (avgDuration >= 7 && avgDuration <= 9) {
@@ -167,9 +243,6 @@ const calculateSleepScore = (weeklyData) => {
   
   // Quality score (40 points): Direct from quality average
   const qualityScore = (avgQuality / 100) * 40;
-  
-  // Consistency score (20 points): Based on standard deviation
-  const consistencyScore = calculateSleepConsistencyScore(weeklyData);
   
   // Sum all scores and round
   return Math.round(durationScore + qualityScore + consistencyScore);
@@ -261,9 +334,10 @@ const getSleepQualityLabel = (qualityScore) => {
 
 /**
  * Generates default sleep data when no Firestore data exists
- * @returns {Object} - Default structured sleep data
+ * Modified to use async sleep score calculation
+ * @returns {Promise<Object>} - Default structured sleep data
  */
-const generateDefaultSleepData = () => {
+const generateDefaultSleepData = async () => {
   // Generate last 7 days of sleep data for charts
   const today = new Date();
   const weeklyData = [];
@@ -285,6 +359,8 @@ const generateDefaultSleepData = () => {
     });
   }
   
+  const sleepScore = await calculateSleepScore(weeklyData);
+  
   return {
     lastNight: {
       date: weeklyData[6].date,
@@ -303,9 +379,12 @@ const generateDefaultSleepData = () => {
       averageSleepDuration: weeklyData.reduce((sum, day) => sum + day.sleepDuration, 0) / 7,
       sleepConsistency: 'High',
       totalNightsTracked: 30,
-      sleepScore: Math.floor(65 + Math.random() * 20), // 65-85
+      sleepScore: sleepScore.score,
       sleepDebt: Math.floor(Math.random() * 6), // 0-5 hours
       optimalSleepDuration: 8, // recommended hours
+      sleepScoreMethod: sleepScore.method,
+      sleepScoreConfidence: sleepScore.confidence,
+      sleepScoreMessage: sleepScore.message
     },
     sleepDistribution: {
       deep: Math.round(weeklyData.reduce((sum, day) => sum + day.deepSleep, 0) / 7 * 10) / 10,

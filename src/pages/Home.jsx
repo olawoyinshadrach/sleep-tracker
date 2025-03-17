@@ -50,6 +50,9 @@ const Home = () => {
     deep: "#3F51B5",
     rem: "#673AB7",
     light: "#9C27B0",
+    confident: "#4CAF50",    // High confidence
+    moderate: "#FFC107",     // Medium confidence
+    uncertain: "#F44336",    // Low confidence
   };
 
   // Redirect to landing if not authenticated
@@ -111,6 +114,18 @@ const Home = () => {
     if (quality >= 70) return COLORS.good;
     if (quality >= 40) return COLORS.fair;
     return COLORS.poor;
+  };
+
+  // Get color based on confidence level
+  const getConfidenceColor = (confidence) => {
+    if (confidence >= 0.8) return COLORS.confident;
+    if (confidence >= 0.5) return COLORS.moderate;
+    return COLORS.uncertain;
+  };
+
+  // Format confidence as percentage
+  const formatConfidence = (confidence) => {
+    return `${Math.round(confidence * 100)}%`;
   };
 
   // Format date for axis labels
@@ -253,21 +268,58 @@ const Home = () => {
                   </div>
                 </div>
               </div>
-              <p className="score-label">
-                Your sleep health is{" "}
-                <span
-                  className="score-quality-text"
-                  style={{ color: getQualityColor(sleepData.stats.sleepScore) }}
-                >
-                  {sleepData.stats.sleepScore >= 80
-                    ? "Excellent"
-                    : sleepData.stats.sleepScore >= 60
-                    ? "Good"
-                    : sleepData.stats.sleepScore >= 40
-                    ? "Fair"
-                    : "Poor"}
-                </span>
-              </p>
+              <div className="score-details">
+                <p className="score-label">
+                  Your sleep health is{" "}
+                  <span
+                    className="score-quality-text"
+                    style={{ color: getQualityColor(sleepData.stats.sleepScore) }}
+                  >
+                    {sleepData.stats.sleepScore >= 80
+                      ? "Excellent"
+                      : sleepData.stats.sleepScore >= 60
+                      ? "Good"
+                      : sleepData.stats.sleepScore >= 40
+                      ? "Fair"
+                      : "Poor"}
+                  </span>
+                </p>
+                
+                {/* Display prediction method and confidence */}
+                {sleepData.stats.sleepScoreMethod && (
+                  <div className="prediction-details">
+                    <div className="prediction-method">
+                      <span className={`prediction-badge ${sleepData.stats.sleepScoreMethod}`}>
+                        {sleepData.stats.sleepScoreMethod === 'knn' ? 'AI Prediction' : 'Standard Calculation'}
+                      </span>
+                    </div>
+                    
+                    {sleepData.stats.sleepScoreMethod === 'knn' && sleepData.stats.sleepScoreConfidence && (
+                      <div className="confidence-indicator">
+                        <div className="confidence-bar">
+                          <div 
+                            className="confidence-level" 
+                            style={{ 
+                              width: formatConfidence(sleepData.stats.sleepScoreConfidence),
+                              backgroundColor: getConfidenceColor(sleepData.stats.sleepScoreConfidence)
+                            }}
+                          ></div>
+                        </div>
+                        <span 
+                          className="confidence-text"
+                          style={{ color: getConfidenceColor(sleepData.stats.sleepScoreConfidence) }}
+                        >
+                          Confidence: {formatConfidence(sleepData.stats.sleepScoreConfidence)}
+                        </span>
+                      </div>
+                    )}
+                    
+                    {sleepData.stats.sleepScoreMessage && (
+                      <p className="prediction-message">{sleepData.stats.sleepScoreMessage}</p>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

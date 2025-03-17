@@ -19,7 +19,9 @@
     "react-router-dom": "^7.1.5",
     "react-toastify": "^11.0.5",
     "recharts": "^2.5.0",
-    "styled-components": "^6.1.15"
+    "styled-components": "^6.1.15",
+    "@tensorflow/tfjs": "^4.10.0",
+    "@tensorflow-models/knn-classifier": "^1.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
