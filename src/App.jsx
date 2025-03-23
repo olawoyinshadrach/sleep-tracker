@@ -1,6 +1,6 @@
 // src/App.jsx
 import React, { useEffect } from "react";
-import { Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { Route, Routes, Navigate, useLocation, BrowserRouter as Router } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -17,6 +17,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import BottomNavigation from "./components/BottomNavigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "./firebase-config";
+import ForgottenPasswordPage from "./pages/ForgottenPasswordPage";
 
 function App() {
   const [user, loading] = useAuthState(auth);
@@ -47,6 +48,7 @@ function App() {
             <Route path="/landing" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgottenpasswordpage" element={<ForgottenPasswordPage />} />
             
             {/* Protected routes */}
             <Route 
@@ -79,7 +81,7 @@ function App() {
                 <ProtectedRoute>
                   <IntegratedSleepClock />
                 </ProtectedRoute>
-              } 
+              }
             />
             
             {/* Redirect root to home if authenticated, otherwise to landing */}
